@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Happy 19th Birthday!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+  
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Pacifico', cursive;
+    user-select: none;
+    cursor: pointer;
+    padding: 20px;
+    position: relative;
+  }
+
+  #message {
+    font-size: 3rem;
+    color: #fff;
+    text-align: center;
+    max-width: 90vw;
+    padding: 20px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.3);
+    transition: opacity 0.5s ease;
+    user-select: text;
+    z-index: 10;
+  }
+
+  #countdown {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(0,0,0,0.3);
+    user-select: none;
+    z-index: 10;
+  }
+
+  #buttons {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+    z-index: 10;
+  }
+
+  button {
+    background: #ff5c8d;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-family: 'Pacifico', cursive;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(255,92,141,0.7);
+    cursor: pointer;
+    transition: background 0.3s ease;
+    user-select: none;
+  }
+
+  button:hover {
+    background: #ff3c6b;
+  }
+
+  #confetti-wrapper, #balloon-wrapper {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: visible;
+    z-index: 5;
+  }
+
+  /* Confetti style */
+  .confetti {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    opacity: 0.85;
+    animation: fall linear forwards;
+  }
+
+  @keyframes fall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Balloon style */
+  .balloon {
+    position: absolute;
+    width: 50px;
+    height: 70px;
+    background-color: red;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: floatUp linear forwards;
+    cursor: pointer;
+    box-shadow: inset -8px -12px 8px rgba(255,255,255,0.4);
+  }
+
+  .balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background: #666;
+    transform: translateX(-50%);
+  }
+
+  @keyframes floatUp {
+    0% {
+      bottom: -100px;
+      opacity: 1;
+      transform: translateX(0) rotate(0deg);
+    }
+    100% {
+      bottom: 110vh;
+      opacity: 0;
+      transform: translateX(30px) rotate(360deg);
+    }
+  }
+
+  /* Gift card popup overlay */
+  #gift-popup {
+    display: none;
+    position: fixed;
+    z-index: 50;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #gift-popup-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px 40px;
+    max-width: 90vw;
+    text-align: center;
+    font-family: 'Pacifico', cursive;
+    color: #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+
+  #gift-popup-content h2 {
+    margin-top: 0;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+
+  #gift-code {
+    font-size: 1.5rem;
+    background: #ff5c8d;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    user-select: all;
+    margin: 15px 0;
+    cursor: pointer;
+    word-break: break-all;
+  }
+
+  #copy-btn, #close-btn {
+    background: #ff5c8d;
+    border: none;
+    color: white;
+    padding: 12px 25px;
+    font-family: 'Pacifico', cursive;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(255,92,141,0.7);
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin: 10px 8px 0 8px;
+    user-select: none;
+  }
+
+  #copy-btn:hover, #close-btn:hover {
+    background: #ff3c6b;
+  }
+</style>
+</head>
+<body>
+  <div id="message">Tap or click here to celebrate!</div>
+  <div id="countdown"></div>
+  <div id="buttons">
+    <button id="shareBtn">Share 🎉</button>
+    <button id="saveBtn">Save Message 📸</button>
+  </div>
+  
+  <div id="confetti-wrapper"></div>
+  <div id="balloon-wrapper"></div>
+
+  <!-- Gift card popup -->
+  <div id="gift-popup" role="dialog" aria-modal="true" aria-labelledby="gift-popup-title">
+    <div id="gift-popup-content">
+      <h2 id="gift-popup-title">🎁 Your Special Gift 🎁</h2>
+      <p>Here’s a little something just for you:</p>
+      <div id="gift-code" title="Click to copy gift code">GIFT-LOVE-19-BDAY-2025</div>
+      <div>
+        <button id="copy-btn">Copy Code</button>
+        <button id="close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  const birthdayMessages = [
+    "Happy 19th Birthday, Love! 🎉",
+    "You light up my world every day! ✨",
+    "May your 19th year be filled with magic! 🎂",
+    "Here’s to 19 years of amazing YOU! 💖",
+    "Cheers to your brightest year yet! 🥂",
+    "I love you more every day. ❤️",
+    "Keep shining, birthday queen! 👑",
+    "This day is all about YOU! 🎈",
+    "Nineteen & fabulous! 💫",
+    "Happy Birthday! Let’s make it unforgettable! 🎊"
+  ];
+
+  let index = 0;
+  let giftShown = false;
+  const messageEl = document.getElementById('message');
+  const confettiWrapper = document.getElementById('confetti-wrapper');
+  const balloonWrapper = document.getElementById('balloon-wrapper');
+  const countdownEl = document.getElementById('countdown');
+  const giftPopup = document.getElementById('gift-popup');
+  const giftCode = document.getElementById('gift-code');
+  const copyBtn = document.getElementById('copy-btn');
+  const closeBtn = document.getElementById('close-btn');
+
+  function changeMessage() {
+    if (giftShown) return; // Ignore clicks if popup open
+
+    if (index === birthdayMessages.length) {
+      showGiftPopup();
+      return;
+    }
+
+    messageEl.style.opacity = 0;
+
+    setTimeout(() => {
+      messageEl.textContent = birthdayMessages[index];
+      messageEl.style.opacity = 1;
+
+      index++;
+
+      launchConfetti();
+      launchBalloons(5);
+    }, 500);
+  }
+
+  function launchConfetti() {
+    const confettiCount = 30;
+    const colors = ['#ff3c78', '#ffcd3c', '#3cffb0', '#3c81ff', '#ff3c9b'];
+
+    for (let i = 0; i < confettiCount; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.top = '-10px';
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+      confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+
+      confetti.style.pointerEvents = 'auto';
+      confetti.addEventListener('click', () => confetti.remove());
+
+      confettiWrapper.appendChild(confetti);
+
+      setTimeout(() => confetti.remove(), 3000);
+    }
+  }
+
+  function launchBalloons(num) {
+    const colors = ['#ff5c8d', '#ffbd3c', '#3ccfff', '#a33cff', '#3cff7d'];
+
+    for (let i = 0; i < num; i++) {
+      const balloon = document.createElement('div');
+      balloon.classList.add('balloon');
+
+      balloon.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+      balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      balloon.style.animationDuration = (5 + Math.random() * 5) + 's';
+      balloon.style.animationTimingFunction = 'linear';
+
+      balloon.style.pointerEvents = 'auto';
+      balloon.addEventListener('click', () => balloon.remove());
+
+      balloonWrapper.appendChild(balloon);
+
+      balloon.addEventListener('animationend', () => balloon.remove());
+    }
+  }
+
+  function updateCountdown() {
+    const now = new Date();
+    let target = new Date(now.getFullYear(), 8, 2, 0, 0, 0);
+    if (now > target) {
+      target = new Date(now.getFullYear() + 1, 8, 2, 0, 0, 0);
+    }
+    const diff = target - now;
+
+    if (diff <= 0) {
+      countdownEl.textContent = "🎉 It's your birthday! 🎉";
+      return;
+    }
+
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const minutes = Math.floor((diff / (1000*60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdownEl.textContent = `Countdown to 2nd Sept: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  function showGiftPopup() {
+    giftShown = true;
+    giftPopup.style.display = 'flex';
+    document.body.style.cursor = 'default';
+  }
+
+  function closeGiftPopup() {
+    giftShown = false;
+    giftPopup.style.display = 'none';
+    document.body.style.cursor = 'pointer';
+    index = 0;
+    messageEl.textContent = birthdayMessages[index];
+    index++;
+  }
+
+  function copyGiftCode() {
+    const text = giftCode.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => copyBtn.textContent = 'Copy Code', 2000);
+    }).catch(() => {
+      alert('Failed to copy. Please copy manually.');
+    });
+  }
+
+  const shareBtn = document.getElementById('shareBtn');
+  shareBtn.addEventListener('click', async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Happy 19th Birthday!',
+          text: messageEl.textContent,
+          url: window.location.href
+        });
+      } catch {
+        alert('Sharing cancelled or not supported.');
+      }
+    } else {
+      alert('Sharing not supported on this browser. You can copy the URL instead.');
+    }
+  });
+
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.addEventListener('click', () => {
+    html2canvas(messageEl).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'birthday_message.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  });
+
+  copyBtn.addEventListener('click', copyGiftCode);
+  closeBtn.addEventListener('click', closeGiftPopup);
+  giftCode.addEventListener('click', copyGiftCode);
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  document.body.addEventListener('click', changeMessage);
+  document.body.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    changeMessage();
+  }, { passive: false });
+</script>
+</body>
+</html>
