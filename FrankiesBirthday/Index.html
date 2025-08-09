@@ -137,68 +137,6 @@
       transform: translateX(30px) rotate(360deg);
     }
   }
-
-  /* Gift card popup overlay */
-  #gift-popup {
-    display: none;
-    position: fixed;
-    z-index: 50;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(5px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #gift-popup-content {
-    background: white;
-    border-radius: 20px;
-    padding: 30px 40px;
-    max-width: 90vw;
-    text-align: center;
-    font-family: 'Pacifico', cursive;
-    color: #333;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  }
-
-  #gift-popup-content h2 {
-    margin-top: 0;
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-  }
-
-  #gift-code {
-    font-size: 1.5rem;
-    background: #ff5c8d;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 12px;
-    user-select: all;
-    margin: 15px 0;
-    cursor: pointer;
-    word-break: break-all;
-  }
-
-  #copy-btn, #close-btn {
-    background: #ff5c8d;
-    border: none;
-    color: white;
-    padding: 12px 25px;
-    font-family: 'Pacifico', cursive;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    box-shadow: 0 4px 10px rgba(255,92,141,0.7);
-    cursor: pointer;
-    transition: background 0.3s ease;
-    margin: 10px 8px 0 8px;
-    user-select: none;
-  }
-
-  #copy-btn:hover, #close-btn:hover {
-    background: #ff3c6b;
-  }
 </style>
 </head>
 <body>
@@ -212,21 +150,9 @@
   <div id="confetti-wrapper"></div>
   <div id="balloon-wrapper"></div>
 
-  <!-- Gift card popup -->
-  <div id="gift-popup" role="dialog" aria-modal="true" aria-labelledby="gift-popup-title">
-    <div id="gift-popup-content">
-      <h2 id="gift-popup-title">🎁 Your Special Gift 🎁</h2>
-      <p>Here’s a little something just for you:</p>
-      <div id="gift-code" title="Click to copy gift code">GIFT-LOVE-19-BDAY-2025</div>
-      <div>
-        <button id="copy-btn">Copy Code</button>
-        <button id="close-btn">Close</button>
-      </div>
-    </div>
-  </div>
-
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
+  // Birthday messages to cycle through
   const birthdayMessages = [
     "Happy 19th Birthday, Love! 🎉",
     "You light up my world every day! ✨",
@@ -241,37 +167,28 @@
   ];
 
   let index = 0;
-  let giftShown = false;
   const messageEl = document.getElementById('message');
   const confettiWrapper = document.getElementById('confetti-wrapper');
   const balloonWrapper = document.getElementById('balloon-wrapper');
   const countdownEl = document.getElementById('countdown');
-  const giftPopup = document.getElementById('gift-popup');
-  const giftCode = document.getElementById('gift-code');
-  const copyBtn = document.getElementById('copy-btn');
-  const closeBtn = document.getElementById('close-btn');
 
+  // Change message and trigger effects
   function changeMessage() {
-    if (giftShown) return; // Ignore clicks if popup open
-
-    if (index === birthdayMessages.length) {
-      showGiftPopup();
-      return;
-    }
-
+    // Fade out
     messageEl.style.opacity = 0;
 
     setTimeout(() => {
       messageEl.textContent = birthdayMessages[index];
       messageEl.style.opacity = 1;
 
-      index++;
+      index = (index + 1) % birthdayMessages.length;
 
       launchConfetti();
-      launchBalloons(5);
+      launchBalloons(5); // Add 5 balloons each click
     }, 500);
   }
 
+  // Create confetti pieces
   function launchConfetti() {
     const confettiCount = 30;
     const colors = ['#ff3c78', '#ffcd3c', '#3cffb0', '#3c81ff', '#ff3c9b'];
@@ -286,15 +203,21 @@
       confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
       confetti.style.animationDelay = (Math.random() * 0.5) + 's';
 
+      // Make confetti clickable to remove early
       confetti.style.pointerEvents = 'auto';
-      confetti.addEventListener('click', () => confetti.remove());
+      confetti.addEventListener('click', () => {
+        confetti.remove();
+      });
 
       confettiWrapper.appendChild(confetti);
 
-      setTimeout(() => confetti.remove(), 3000);
+      setTimeout(() => {
+        confetti.remove();
+      }, 3000);
     }
   }
 
+  // Create balloons floating up
   function launchBalloons(num) {
     const colors = ['#ff5c8d', '#ffbd3c', '#3ccfff', '#a33cff', '#3cff7d'];
 
@@ -307,23 +230,30 @@
       balloon.style.animationDuration = (5 + Math.random() * 5) + 's';
       balloon.style.animationTimingFunction = 'linear';
 
+      // Remove balloon when clicked
       balloon.style.pointerEvents = 'auto';
-      balloon.addEventListener('click', () => balloon.remove());
+      balloon.addEventListener('click', () => {
+        balloon.remove();
+      });
 
       balloonWrapper.appendChild(balloon);
 
+      // Remove balloon after animation finishes
       balloon.addEventListener('animationend', () => balloon.remove());
     }
   }
 
+  // Countdown Timer to Sept 2nd
   function updateCountdown() {
     const now = new Date();
-    let target = new Date(now.getFullYear(), 8, 2, 0, 0, 0);
+    // Set target date to Sept 2, 00:00:00 of current year
+    let target = new Date(now.getFullYear(), 8, 2, 0, 0, 0); // Months 0-based (8 = Sept)
+    // If target date has passed this year, count down to next year
     if (now > target) {
       target = new Date(now.getFullYear() + 1, 8, 2, 0, 0, 0);
     }
-    const diff = target - now;
 
+    const diff = target - now;
     if (diff <= 0) {
       countdownEl.textContent = "🎉 It's your birthday! 🎉";
       return;
@@ -337,31 +267,7 @@
     countdownEl.textContent = `Countdown to 2nd Sept: ${days}d ${hours}h ${minutes}m ${seconds}s`;
   }
 
-  function showGiftPopup() {
-    giftShown = true;
-    giftPopup.style.display = 'flex';
-    document.body.style.cursor = 'default';
-  }
-
-  function closeGiftPopup() {
-    giftShown = false;
-    giftPopup.style.display = 'none';
-    document.body.style.cursor = 'pointer';
-    index = 0;
-    messageEl.textContent = birthdayMessages[index];
-    index++;
-  }
-
-  function copyGiftCode() {
-    const text = giftCode.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      copyBtn.textContent = 'Copied!';
-      setTimeout(() => copyBtn.textContent = 'Copy Code', 2000);
-    }).catch(() => {
-      alert('Failed to copy. Please copy manually.');
-    });
-  }
-
+  // Share button functionality
   const shareBtn = document.getElementById('shareBtn');
   shareBtn.addEventListener('click', async () => {
     if (navigator.share) {
@@ -371,7 +277,7 @@
           text: messageEl.textContent,
           url: window.location.href
         });
-      } catch {
+      } catch (err) {
         alert('Sharing cancelled or not supported.');
       }
     } else {
@@ -379,8 +285,10 @@
     }
   });
 
+  // Save message as image button
   const saveBtn = document.getElementById('saveBtn');
   saveBtn.addEventListener('click', () => {
+    // Use html2canvas to screenshot the message div
     html2canvas(messageEl).then(canvas => {
       const link = document.createElement('a');
       link.download = 'birthday_message.png';
@@ -389,18 +297,17 @@
     });
   });
 
-  copyBtn.addEventListener('click', copyGiftCode);
-  closeBtn.addEventListener('click', closeGiftPopup);
-  giftCode.addEventListener('click', copyGiftCode);
-
+  // Initialize countdown and message
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
+  // Listen for clicks or taps to change messages and launch effects
   document.body.addEventListener('click', changeMessage);
   document.body.addEventListener('touchstart', (e) => {
-    e.preventDefault();
+    e.preventDefault(); // prevent double trigger on some devices
     changeMessage();
   }, { passive: false });
+
 </script>
 </body>
 </html>
