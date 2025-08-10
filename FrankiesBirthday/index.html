@@ -56,6 +56,7 @@
     z-index: 5;
   }
 
+  /* Confetti style */
   .confetti {
     position: absolute;
     width: 12px;
@@ -66,10 +67,17 @@
   }
 
   @keyframes fall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
   }
 
+  /* Balloon style */
   .balloon {
     position: absolute;
     width: 50px;
@@ -93,75 +101,62 @@
   }
 
   @keyframes floatUp {
-    0% { bottom: -100px; opacity: 1; transform: translateX(0) rotate(0deg); }
-    100% { bottom: 110vh; opacity: 0; transform: translateX(30px) rotate(360deg); }
+    0% {
+      bottom: -100px;
+      opacity: 1;
+      transform: translateX(0) rotate(0deg);
+    }
+    100% {
+      bottom: 110vh;
+      opacity: 0;
+      transform: translateX(30px) rotate(360deg);
+    }
   }
 
-  /* Popup Styling */
-  #popupOverlay {
+  /* Popup styling */
+  #giftPopup {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.5);
-    z-index: 100;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #popup {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: white;
-    padding: 20px 30px;
-    border-radius: 15px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 100;
     text-align: center;
-    font-family: Arial, sans-serif;
-    max-width: 300px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    max-width: 90%;
   }
-
-  #popup h2 {
-    margin-top: 0;
-    color: #ff5c8d;
-  }
-
   #giftCode {
+    font-size: 1.2em;
     background: #f0f0f0;
     padding: 10px;
-    font-family: monospace;
-    border-radius: 8px;
-    margin: 10px 0;
-    display: inline-block;
+    border-radius: 5px;
+    margin: 15px 0;
+    word-break: break-all;
   }
-
-  .popup-btn {
-    background: #ff5c8d;
-    border: none;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 8px;
-    cursor: pointer;
+  #giftPopup button {
     margin: 5px;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
   }
-  .popup-btn:hover { background: #ff3c6b; }
 </style>
 </head>
 <body>
-  <div id="message">Tap or click here you silly cunt!</div>
+  <div id="message">Tap or click here to celebrate!</div>
   <div id="countdown"></div>
   
   <div id="confetti-wrapper"></div>
   <div id="balloon-wrapper"></div>
 
-  <!-- Popup -->
-  <div id="popupOverlay">
-    <div id="popup">
-      <h2>🎁 Your Gift Card</h2>
-      <div id="giftCode">ENTER GIFT CARD HERE</div>
-      <div>
-        <button class="popup-btn" id="copyBtn">Copy Code</button>
-        <button class="popup-btn" id="closeBtn">Close</button>
-      </div>
-    </div>
+  <!-- Gift popup -->
+  <div id="giftPopup">
+    <h2>Your Gift Card 🎁</h2>
+    <p id="giftCode">ABCD-1234-EFGH</p>
+    <button id="copyBtn">Copy</button>
+    <button id="closePopup">Close</button>
   </div>
 
 <script>
@@ -174,7 +169,7 @@
     "I love you more every day. ❤️",
     "Keep shining, birthday queen! 👑",
     "This day is all about YOU! 🎈",
-    "I LOVE YOU SO MUCH 💫",
+    "Nineteen & fabulous! 💫",
     "Happy Birthday! Let’s make it unforgettable! 🎊"
   ];
 
@@ -183,25 +178,25 @@
   const confettiWrapper = document.getElementById('confetti-wrapper');
   const balloonWrapper = document.getElementById('balloon-wrapper');
   const countdownEl = document.getElementById('countdown');
-
-  const popupOverlay = document.getElementById('popupOverlay');
-  const closeBtn = document.getElementById('closeBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const giftCodeEl = document.getElementById('giftCode');
+  const giftPopup = document.getElementById('giftPopup');
 
   function changeMessage() {
     messageEl.style.opacity = 0;
     setTimeout(() => {
       messageEl.textContent = birthdayMessages[index];
       messageEl.style.opacity = 1;
-      
+      index++;
+
+      // Launch effects
       launchConfetti();
       launchBalloons(5);
 
-      index++;
+      // When all messages are shown, show popup
       if (index >= birthdayMessages.length) {
-        setTimeout(showPopup, 700); // Show popup at end
-        index = 0; // reset for replay if clicked again
+        setTimeout(() => {
+          giftPopup.style.display = 'block';
+        }, 800);
+        index = 0; // Reset for replay if needed
       }
     }, 500);
   }
@@ -255,35 +250,31 @@
     const seconds = Math.floor((diff / 1000) % 60);
     countdownEl.textContent = `Countdown to 2nd Sept: ${days}d ${hours}h ${minutes}m ${seconds}s`;
   }
-
-  function showPopup() {
-    popupOverlay.style.display = 'flex';
-  }
-
-  closeBtn.addEventListener('click', () => {
-    popupOverlay.style.display = 'none';
-  });
-
-  popupOverlay.addEventListener('click', (e) => {
-    if (e.target === popupOverlay) popupOverlay.style.display = 'none';
-  });
-
-  copyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(giftCodeEl.textContent).then(() => {
-      copyBtn.textContent = "Copied!";
-      setTimeout(() => copyBtn.textContent = "Copy Code", 1500);
-    });
-  });
-
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  document.body.addEventListener('click', changeMessage);
-  document.body.addEventListener('touchstart', (e) => {
+  // Mobile-friendly body tap handler
+  function handleBodyClick(e) {
+    if (e.target.closest('#giftPopup')) return;
+    changeMessage();
+  }
+  document.body.addEventListener('click', handleBodyClick);
+  document.body.addEventListener('touchstart', function (e) {
+    if (e.target.closest('#giftPopup')) return;
     e.preventDefault();
     changeMessage();
   }, { passive: false });
+
+  // Popup buttons
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const code = document.getElementById('giftCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      alert('Gift code copied!');
+    });
+  });
+  document.getElementById('closePopup').addEventListener('click', () => {
+    giftPopup.style.display = 'none';
+  });
 </script>
 </body>
 </html>
-
