@@ -66,7 +66,6 @@
     z-index: 5;
   }
 
-  /* Confetti style */
   .confetti {
     position: absolute;
     width: 12px;
@@ -77,17 +76,10 @@
   }
 
   @keyframes fall {
-    0% {
-      transform: translateY(-20px) rotate(0deg);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(100vh) rotate(720deg);
-      opacity: 0;
-    }
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
   }
 
-  /* Balloon style */
   .balloon {
     position: absolute;
     width: 50px;
@@ -110,19 +102,10 @@
   }
 
   @keyframes floatUp {
-    0% {
-      bottom: -100px;
-      opacity: 1;
-      transform: translateX(0) rotate(0deg);
-    }
-    100% {
-      bottom: 110vh;
-      opacity: 0;
-      transform: translateX(30px) rotate(360deg);
-    }
+    0% { bottom: -100px; opacity: 1; transform: translateX(0) rotate(0deg); }
+    100% { bottom: 110vh; opacity: 0; transform: translateX(30px) rotate(360deg); }
   }
 
-  /* Popup styling */
   #giftPopup {
     display: none;
     position: fixed;
@@ -181,15 +164,14 @@
 </style>
 </head>
 <body>
-  <div id="message">Tap or click here to celebrate!</div>
+  <div id="message">Tap or click here you silly cunt!</div>
   <div id="countdown"></div>
   
   <div id="confetti-wrapper"></div>
   <div id="balloon-wrapper"></div>
 
-  <!-- Gift popup -->
   <div id="giftPopup">
-    <h2>Your Gift Card 🎁</h2>
+    <h2>Just Eat Giftcard 🎁</h2>
     <p id="giftCode">ABCD-1234-EFGH</p>
     <button id="copyBtn">Copy</button>
     <button id="closePopup">Close</button>
@@ -197,11 +179,11 @@
 
 <script>
   const birthdayMessages = [
-    "Happy 19th Birthday, Love! 🎉",
-    "You light up my world every day! ✨",
-    "May your 19th year be filled with magic! 🎂",
-    "Here’s to 19 years of amazing YOU! 💖",
-    "Cheers to your brightest year yet! 🥂",
+    "Happy Birthday Frankie 🎂",
+    "I hope you have a good day even though you don't like birthday parties, which you never told me why btw 🤨",
+    "My days are so much better when you're in them",
+    "Thank You for giving me a second chance",
+    "There's so much I love about you",
     "I love you more every day. ❤️",
     "Keep shining, birthday queen! 👑",
     "This day is all about YOU! 🎈",
@@ -224,7 +206,6 @@
       messageEl.style.opacity = 1;
       messageEl.style.transform = "scale(1)";
       index++;
-
       launchConfetti();
       launchBalloons(5);
 
@@ -298,11 +279,25 @@
   document.getElementById('copyBtn').addEventListener('click', () => {
     const code = document.getElementById('giftCode').textContent;
     navigator.clipboard.writeText(code).then(() => {
-      alert('Gift code copied!');
+      alert('Enjoy fatty');
     });
   });
+
+  // Updated close button to open Just Eat app with fallback
   document.getElementById('closePopup').addEventListener('click', () => {
     giftPopup.style.display = 'none';
+
+    const appLink = 'justeat://';
+    const webFallback = 'https://www.just-eat.co.uk/';
+
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = appLink;
+    document.body.appendChild(iframe);
+
+    setTimeout(() => {
+      window.location.href = webFallback;
+    }, 1000);
   });
 </script>
 </body>
