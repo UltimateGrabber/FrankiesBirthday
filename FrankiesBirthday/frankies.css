@@ -1,0 +1,15 @@
+#message {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(1.8rem, 5vw, 3rem); /* scales for all phone sizes */
+    color: #fff;
+    text-align: center;
+    max-width: 90vw;
+    padding: 25px 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    user-select: text;
+    z-index: 10;
+}
