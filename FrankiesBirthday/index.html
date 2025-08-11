@@ -25,6 +25,18 @@
     position: relative;
   }
 
+  /* VIDEO BACKGROUND - hidden by default */
+  #video-bg {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+  }
+
   @keyframes bgShift {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -33,7 +45,7 @@
 
   #message {
     font-family: 'Pacifico', cursive;
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 5vw, 3rem);
     color: #fff;
     text-align: center;
     max-width: 90vw;
@@ -164,6 +176,25 @@
 </style>
 </head>
 <body>
+
+  <!-- Background video, hidden by default -->
+  <video id="video-bg" autoplay muted loop playsinline>
+    <source src="background.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Background music -->
+  <audio id="bg-music" loop>
+    <source src="music.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Second audio, plays after last message -->
+  <audio id="second-music" loop>
+    <source src="justeat.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
   <div id="message">Tap or click here you silly cunt!</div>
   <div id="countdown"></div>
   
@@ -197,6 +228,11 @@
   const balloonWrapper = document.getElementById('balloon-wrapper');
   const countdownEl = document.getElementById('countdown');
   const giftPopup = document.getElementById('giftPopup');
+  const bgMusic = document.getElementById('bg-music');
+  const secondMusic = document.getElementById('second-music');
+  const videoBg = document.getElementById('video-bg');
+  let musicStarted = false;
+  let secondMusicStarted = false;
 
   function changeMessage() {
     messageEl.style.opacity = 0;
@@ -205,6 +241,24 @@
       messageEl.textContent = birthdayMessages[index];
       messageEl.style.opacity = 1;
       messageEl.style.transform = "scale(1)";
+
+      if (birthdayMessages[index] === "Keep shining, birthday queen! 👑") {
+        if (!secondMusicStarted) {
+          // Stop first music
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+
+          // Play second music
+          secondMusic.play().catch(err => {
+            console.log('Second music play prevented:', err);
+          });
+          secondMusicStarted = true;
+
+          // Show video background too
+          videoBg.style.display = 'block';
+        }
+      }
+
       index++;
       launchConfetti();
       launchBalloons(5);
@@ -267,12 +321,29 @@
 
   function handleBodyClick(e) {
     if (e.target.closest('#giftPopup')) return;
+
+    if (!musicStarted) {
+      bgMusic.play().catch(err => {
+        console.log('Music play prevented:', err);
+      });
+      musicStarted = true;
+    }
+
     changeMessage();
   }
+
   document.body.addEventListener('click', handleBodyClick);
   document.body.addEventListener('touchstart', function (e) {
     if (e.target.closest('#giftPopup')) return;
     e.preventDefault();
+
+    if (!musicStarted) {
+      bgMusic.play().catch(err => {
+        console.log('Music play prevented:', err);
+      });
+      musicStarted = true;
+    }
+
     changeMessage();
   }, { passive: false });
 
@@ -283,7 +354,6 @@
     });
   });
 
-  // Updated close button to open Just Eat app with fallback
   document.getElementById('closePopup').addEventListener('click', () => {
     giftPopup.style.display = 'none';
 
@@ -302,4 +372,3 @@
 </script>
 </body>
 </html>
-
