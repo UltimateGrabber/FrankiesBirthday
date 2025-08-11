@@ -206,6 +206,7 @@
     <p id="giftCode">ABCD-1234-EFGH</p>
     <button id="copyBtn">Copy</button>
     <button id="closePopup">Close</button>
+    <button id="openJustEat">Open Just Eat</button>
   </div>
 
 <script>
@@ -244,17 +245,12 @@
 
       if (birthdayMessages[index] === "Keep shining, birthday queen! 👑") {
         if (!secondMusicStarted) {
-          // Stop first music
           bgMusic.pause();
           bgMusic.currentTime = 0;
-
-          // Play second music
           secondMusic.play().catch(err => {
             console.log('Second music play prevented:', err);
           });
           secondMusicStarted = true;
-
-          // Show video background too
           videoBg.style.display = 'block';
         }
       }
@@ -321,14 +317,12 @@
 
   function handleBodyClick(e) {
     if (e.target.closest('#giftPopup')) return;
-
     if (!musicStarted) {
       bgMusic.play().catch(err => {
         console.log('Music play prevented:', err);
       });
       musicStarted = true;
     }
-
     changeMessage();
   }
 
@@ -336,14 +330,12 @@
   document.body.addEventListener('touchstart', function (e) {
     if (e.target.closest('#giftPopup')) return;
     e.preventDefault();
-
     if (!musicStarted) {
       bgMusic.play().catch(err => {
         console.log('Music play prevented:', err);
       });
       musicStarted = true;
     }
-
     changeMessage();
   }, { passive: false });
 
@@ -356,15 +348,15 @@
 
   document.getElementById('closePopup').addEventListener('click', () => {
     giftPopup.style.display = 'none';
+  });
 
+  document.getElementById('openJustEat').addEventListener('click', () => {
     const appLink = 'justeat://';
     const webFallback = 'https://www.just-eat.co.uk/';
-
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
     iframe.src = appLink;
     document.body.appendChild(iframe);
-
     setTimeout(() => {
       window.location.href = webFallback;
     }, 1000);
