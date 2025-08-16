@@ -25,7 +25,6 @@
     position: relative;
   }
 
-  /* VIDEO BACKGROUND - hidden by default */
   #video-bg {
     display: none;
     position: fixed;
@@ -177,7 +176,6 @@
 </head>
 <body>
 
-  <!-- Background video, hidden by default -->
   <video id="video-bg" autoplay muted loop playsinline>
     <source src="background.mp4" type="video/mp4" />
     Your browser does not support the video tag.
@@ -189,7 +187,7 @@
     Your browser does not support the audio element.
   </audio>
 
-  <!-- Second audio, plays after last message -->
+  <!-- Second audio -->
   <audio id="second-music" loop>
     <source src="justeat.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
@@ -315,8 +313,8 @@
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  function handleBodyClick(e) {
-    if (e.target.closest('#giftPopup')) return;
+  // ✅ Unified click/tap handler
+  function startMusicAndMessage() {
     if (!musicStarted) {
       bgMusic.play().catch(err => {
         console.log('Music play prevented:', err);
@@ -326,18 +324,17 @@
     changeMessage();
   }
 
-  document.body.addEventListener('click', handleBodyClick);
-  document.body.addEventListener('touchstart', function (e) {
-    if (e.target.closest('#giftPopup')) return;
-    e.preventDefault();
-    if (!musicStarted) {
-      bgMusic.play().catch(err => {
-        console.log('Music play prevented:', err);
-      });
-      musicStarted = true;
+  document.body.addEventListener('click', (e) => {
+    if (!e.target.closest('#giftPopup')) {
+      startMusicAndMessage();
     }
-    changeMessage();
-  }, { passive: false });
+  });
+
+  document.body.addEventListener('touchend', (e) => {
+    if (!e.target.closest('#giftPopup')) {
+      startMusicAndMessage();
+    }
+  }, { passive: true });
 
   document.getElementById('copyBtn').addEventListener('click', () => {
     const code = document.getElementById('giftCode').textContent;
@@ -364,6 +361,3 @@
 </script>
 </body>
 </html>
-
-
-
