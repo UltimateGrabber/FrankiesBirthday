@@ -25,7 +25,6 @@
     position: relative;
   }
 
-  /* VIDEO BACKGROUND - hidden by default */
   #video-bg {
     display: none;
     position: fixed;
@@ -327,7 +326,7 @@
   });
   document.getElementById('closePopup').addEventListener('click', () => { giftPopup.style.display = 'none'; });
 
-  // ===== Updated Open Just Eat button with proper iPad/iOS detection =====
+  // ===== Updated Open Just Eat button with UK iOS App Store link =====
   document.getElementById('openJustEat').addEventListener('click', () => {
     const appLink = 'justeat://';
     const iosStore = 'https://apps.apple.com/gb/app/just-eat-food-delivery/id566096581';
@@ -342,13 +341,11 @@
     if (/android/i.test(userAgent)) fallback = androidStore;
     else if (isIOS) fallback = iosStore;
 
-    // Try to open app first
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';
     iframe.src = appLink;
     document.body.appendChild(iframe);
 
-    // Fallback if app not installed
     setTimeout(() => { window.location.href = fallback; }, 1200);
   });
 </script>
