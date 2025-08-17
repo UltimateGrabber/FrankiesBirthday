@@ -1,157 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Happy 19th Birthday!</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;500&display=swap');
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Happy 19th Birthday!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
+  
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
+    background-size: 400% 400%;
+    animation: bgShift 15s ease infinite;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    user-select: none;
+    cursor: pointer;
+    padding: 20px;
+    position: relative;
+  }
 
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-      font-family: 'Poppins', sans-serif;
-      text-align: center;
-      color: #fff;
-      overflow: hidden;
-    }
+  /* VIDEO BACKGROUND - hidden by default */
+  #video-bg {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+  }
 
-    #messageBox {
-      max-width: 90%;
-      font-size: 1.8em;
-      font-family: 'Pacifico', cursive;
-      padding: 20px;
-      border-radius: 20px;
-      background: rgba(0,0,0,0.3);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-      animation: fadeIn 1s ease;
-    }
+  @keyframes bgShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
+  #message {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: #fff;
+    text-align: center;
+    max-width: 90vw;
+    padding: 25px 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    user-select: text;
+    z-index: 10;
+  }
 
-    #giftPopup {
-      display: none;
-      position: fixed;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fff;
-      color: #333;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      font-size: 1.2em;
-      z-index: 10;
-    }
+  #countdown {
+    margin-top: 20px;
+    font-size: 1.3rem;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(0,0,0,0.3);
+    user-select: none;
+    z-index: 10;
+  }
 
-    #giftPopup button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      border: none;
-      background: #ff758c;
-      color: #fff;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1em;
-    }
+  #confetti-wrapper, #balloon-wrapper {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: visible;
+    z-index: 5;
+  }
 
-    #giftPopup button:hover {
-      background: #e94e77;
-    }
-  </style>
+  .confetti {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    opacity: 0.9;
+    animation: fall linear forwards;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .balloon {
+    position: absolute;
+    width: 50px;
+    height: 70px;
+    background-color: red;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: floatUp linear forwards;
+    box-shadow: inset -8px -12px 8px rgba(255,255,255,0.4);
+  }
+
+  .balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background: #666;
+    transform: translateX(-50%);
+  }
+
+  @keyframes floatUp {
+    0% { bottom: -100px; opacity: 1; transform: translateX(0) rotate(0deg); }
+    100% { bottom: 110vh; opacity: 0; transform: translateX(30px) rotate(360deg); }
+  }
+
+  #giftPopup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    z-index: 100;
+    text-align: center;
+    max-width: 90%;
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -48%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+  }
+
+  #giftPopup h2 {
+    color: #fff;
+    font-family: 'Pacifico', cursive;
+    margin-bottom: 10px;
+  }
+
+  #giftCode {
+    font-size: 1.2em;
+    background: rgba(255,255,255,0.25);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 15px 0;
+    word-break: break-all;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  #giftPopup button {
+    margin: 5px;
+    padding: 10px 18px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.3);
+    color: #fff;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+
+  #giftPopup button:hover {
+    background: rgba(255,255,255,0.5);
+  }
+</style>
 </head>
 <body>
-  <div id="messageBox">Tap anywhere to begin 🎉</div>
 
-  <!-- Music -->
-  <audio id="bgMusic" src="mysteriousgirlmusic.mp3"></audio>
-  <audio id="justEatMusic" src="birthday.mp3"></audio>
+  <!-- Background video, hidden by default -->
+  <video id="video-bg" autoplay muted loop playsinline>
+    <source src="background.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
 
-  <!-- Gift popup -->
+  <!-- Background music -->
+  <audio id="bg-music" loop>
+    <source src="mysteriousgirlmusic.MP3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Second audio, plays after last message -->
+  <audio id="second-music" loop>
+    <source src="justeat.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <div id="message">Tap or click here you silly cunt!</div>
+  <div id="countdown"></div>
+  
+  <div id="confetti-wrapper"></div>
+  <div id="balloon-wrapper"></div>
+
   <div id="giftPopup">
-    🎁 Your Just Eat Gift Code: <b>JEAT-19BDAY-LOVE</b>
-    <br/>
-    <button onclick="copyCode()">Copy Code</button>
-    <button onclick="openJustEat()">Open Just Eat</button>
+    <h2>Just Eat Giftcard 🎁</h2>
+    <p id="giftCode">ABCD-1234-EFGH</p>
+    <button id="copyBtn">Copy</button>
+    <button id="closePopup">Close</button>
+    <button id="openJustEat">Open Just Eat</button>
   </div>
 
-  <script>
-    const messages = [
-      "Happy Birthday Frankie! 🎂🎉",
-      "I hope your day is filled with love ❤️",
-      "So you can be mine forever hehe xx 😉",
-      "Keep shining, birthday queen! 👑"
-    ];
+<script>
+  const birthdayMessages = [
+    "Happy Birthday Frankie 🎂",
+    "You never told me why you don't like birthday parties btw mysterious girl 🤨",
+    "My days are so much better when you're in them",
+    "Thank You for giving me a second chance",
+    "There's so much I love about you",
+    "You have such a bright personality n also make me horny lol ",
+    "I love you more every day. ❤️",
+    "I got you this gift to make you fatter",
+    "Then you can be all mine forever hehe xx",
+    "Keep shining, birthday queen! 👑"
+  ];
 
-    let currentMessage = 0;
-    let musicStarted = false;
-    let lastInteraction = 0;
+  let index = 0;
+  const messageEl = document.getElementById('message');
+  const confettiWrapper = document.getElementById('confetti-wrapper');
+  const balloonWrapper = document.getElementById('balloon-wrapper');
+  const countdownEl = document.getElementById('countdown');
+  const giftPopup = document.getElementById('giftPopup');
+  const bgMusic = document.getElementById('bg-music');
+  const secondMusic = document.getElementById('second-music');
+  const videoBg = document.getElementById('video-bg');
+  let musicStarted = false;
+  let secondMusicStarted = false;
 
-    const messageBox = document.getElementById('messageBox');
-    const bgMusic = document.getElementById('bgMusic');
-    const justEatMusic = document.getElementById('justEatMusic');
-    const giftPopup = document.getElementById('giftPopup');
+  function changeMessage() {
+    messageEl.style.opacity = 0;
+    messageEl.style.transform = "scale(0.95)";
+    setTimeout(() => {
+      messageEl.textContent = birthdayMessages[index];
+      messageEl.style.opacity = 1;
+      messageEl.style.transform = "scale(1)";
 
-    function changeMessage() {
-      if (currentMessage < messages.length) {
-        messageBox.textContent = messages[currentMessage];
-        currentMessage++;
-
-        if (currentMessage === messages.length) {
-          setTimeout(() => {
-            bgMusic.pause();
-            justEatMusic.play();
-            giftPopup.style.display = 'block';
-          }, 2000);
+      if (birthdayMessages[index] === "Keep shining, birthday queen! 👑") {
+        if (!secondMusicStarted) {
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+          secondMusic.play().catch(err => {
+            console.log('Second music play prevented:', err);
+          });
+          secondMusicStarted = true;
+          videoBg.style.display = 'block';
         }
       }
+
+      index++;
+      launchConfetti();
+      launchBalloons(5);
+
+      if (index >= birthdayMessages.length) {
+        setTimeout(() => {
+          giftPopup.style.display = 'block';
+        }, 800);
+        index = 0;
+      }
+    }, 500);
+  }
+
+  function launchConfetti() {
+    const confettiCount = 30;
+    const colors = ['#ff3c78', '#ffcd3c', '#3cffb0', '#3c81ff', '#ff3c9b', '#fff'];
+    for (let i = 0; i < confettiCount; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.top = '-10px';
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+      confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+      confettiWrapper.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 3000);
     }
+  }
 
-    function startMusicAndMessage() {
-      const now = Date.now();
-      if (now - lastInteraction < 300) return; // stop double-trigger
-      lastInteraction = now;
-
-      if (!musicStarted) {
-        bgMusic.play().catch(err => {
-          console.log('Music play prevented:', err);
-        });
-        musicStarted = true;
-      }
-      changeMessage();
+  function launchBalloons(num) {
+    const colors = ['#ff5c8d', '#ffbd3c', '#3ccfff', '#a33cff', '#3cff7d'];
+    for (let i = 0; i < num; i++) {
+      const balloon = document.createElement('div');
+      balloon.classList.add('balloon');
+      balloon.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+      balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      balloon.style.animationDuration = (5 + Math.random() * 5) + 's';
+      balloonWrapper.appendChild(balloon);
+      balloon.addEventListener('animationend', () => balloon.remove());
     }
+  }
 
-    // Desktop + Android
-    document.body.addEventListener('click', (e) => {
-      if (!e.target.closest('#giftPopup')) {
-        startMusicAndMessage();
-      }
-    });
+  function updateCountdown() {
+    const now = new Date();
+    let target = new Date(now.getFullYear(), 8, 2, 0, 0, 0);
+    if (now > target) target = new Date(now.getFullYear() + 1, 8, 2, 0, 0, 0);
+    const diff = target - now;
+    if (diff <= 0) {
+      countdownEl.textContent = "🎉 It's your birthday! 🎉";
+      return;
+    }
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const minutes = Math.floor((diff / (1000*60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+    countdownEl.textContent = `Countdown to 2nd Sept: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 
-    // iOS Safari
-    document.body.addEventListener('touchend', (e) => {
-      if (!e.target.closest('#giftPopup')) {
-        startMusicAndMessage();
-      }
-    }, { passive: true });
+  // ===== Mobile-safe gesture handling (no double-trigger) =====
+  let lastInteraction = 0;
 
-    function copyCode() {
-      navigator.clipboard.writeText("JEAT-19BDAY-LOVE").then(() => {
-        alert("Gift code copied!");
+  function startMusicAndMessage() {
+    const now = Date.now();
+    // prevent click + touchend both firing on one tap
+    if (now - lastInteraction < 300) return;
+    lastInteraction = now;
+
+    if (!musicStarted) {
+      bgMusic.play().catch(err => {
+        console.log('Music play prevented:', err);
       });
+      musicStarted = true;
     }
+    changeMessage();
+  }
 
-    function openJustEat() {
-      window.location.href = "https://www.just-eat.co.uk";
+  // Desktop/Android
+  document.body.addEventListener('click', (e) => {
+    if (!e.target.closest('#giftPopup')) {
+      startMusicAndMessage();
     }
-  </script>
+  });
+
+  // iOS Safari prefers touchend; no preventDefault so gesture counts
+  document.body.addEventListener('touchend', (e) => {
+    if (!e.target.closest('#giftPopup')) {
+      startMusicAndMessage();
+    }
+  }, { passive: true });
+
+  // Popup buttons
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const code = document.getElementById('giftCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      alert('Enjoy fatty');
+    });
+  });
+
+  document.getElementById('closePopup').addEventListener('click', () => {
+    giftPopup.style.display = 'none';
+  });
+
+  document.getElementById('openJustEat').addEventListener('click', () => {
+    const appLink = 'justeat://';
+    const webFallback = 'https://www.just-eat.co.uk/';
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = appLink;
+    document.body.appendChild(iframe);
+    setTimeout(() => {
+      window.location.href = webFallback;
+    }, 1000);
+  });
+</script>
 </body>
 </html>
