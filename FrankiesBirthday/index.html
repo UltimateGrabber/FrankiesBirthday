@@ -326,7 +326,7 @@
   });
   document.getElementById('closePopup').addEventListener('click', () => { giftPopup.style.display = 'none'; });
 
-  // ===== Fully reliable Open Just Eat button for Android & iOS =====
+  // ===== Open Just Eat button with 5s timeout =====
   document.getElementById('openJustEat').addEventListener('click', () => {
     const appLink = 'justeat://';
     const iosStore = 'https://apps.apple.com/gb/app/just-eat-food-delivery/id566347057';
@@ -336,3 +336,28 @@
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isIOS = /iPhone|iPod/.test(userAgent) || 
                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /android/i.test(userAgent);
+
+    let fallback = webFallback;
+    if (isIOS) fallback = iosStore;
+    else if (isAndroid) fallback = androidStore;
+
+    let didHide = false;
+
+    function handleVisibilityChange() {
+      if (document.hidden) didHide = true;
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    window.location = appLink;
+
+    setTimeout(() => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (!didHide) {
+        window.location = fallback;
+      }
+    }, 5000); // 5-second timeout
+  });
+</script>
+</body>
+</html>
