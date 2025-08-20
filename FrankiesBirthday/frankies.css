@@ -1,6 +1,6 @@
 #message {
     font-family: 'Pacifico', cursive;
-    font-size: clamp(1.8rem, 5vw, 3rem); /* scales for all phone sizes */
+    font-size: clamp(1.5rem, 4.5vw, 2.5rem); /* slightly smaller for all devices */
     color: #fff;
     text-align: center;
     max-width: 90vw;
