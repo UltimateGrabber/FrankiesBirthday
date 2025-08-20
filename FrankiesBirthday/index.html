@@ -58,6 +58,18 @@
     z-index: 10;
   }
 
+  /* Smaller text for love messages */
+  .small-text {
+    font-size: 1rem;
+    line-height: 1.4;
+    display: block;
+  }
+  @media (max-width: 600px) {
+    .small-text {
+      font-size: 0.8rem;
+    }
+  }
+
   #countdown {
     margin-top: 20px;
     font-size: 1.3rem;
@@ -213,8 +225,8 @@
     "Thank You for giving me a second chance",
     "There's so much I love about you",
     "You have such a bright personality n also make me horny lol ",
-    "From your cute little nose to your sexy lips I wanna kiss so bad. Then theres your perfect eyes I aways get lost in complimented with those eyebrows n cheeks 😍. Youre so Gorgeous on the inside and out. I love you more everyday. ❤️",
-    "The moment we first started talking I could feel our connection so strong that personality made me realise straight away that I didnt want anyone else but you. When we talk you make me the happiest boy alive. Cant wait to be able to kiss you, cuddle you n love you. I want you to be all mine!!",
+    '<span class="small-text">From your cute little nose to your sexy lips I wanna kiss so bad. Then theres your perfect eyes I aways get lost in complimented with those eyebrows n cheeks 😍. Youre so Gorgeous on the inside and out. I love you more everyday. ❤️</span>',
+    '<span class="small-text">The moment we first started talking I could feel our connection so strong that personality made me realise straight away that I didnt want anyone else but you. When we talk you make me the happiest boy alive. Cant wait to be able to kiss you, cuddle you n love you. I want you to be all mine!!</span>',
     "Then you can be all mine forever hehe xx",
     "Keep shining, birthday queen! 👑"
   ];
@@ -235,7 +247,7 @@
     messageEl.style.opacity = 0;
     messageEl.style.transform = "scale(0.95)";
     setTimeout(() => {
-      messageEl.textContent = birthdayMessages[index];
+      messageEl.innerHTML = birthdayMessages[index]; // allow HTML inside
       messageEl.style.opacity = 1;
       messageEl.style.transform = "scale(1)";
 
@@ -333,6 +345,3 @@
 </script>
 </body>
 </html>
-
-
-
